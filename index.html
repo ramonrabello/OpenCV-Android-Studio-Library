@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>OpenCV in Android Studio by ramonrabello</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/ramonrabello/OpenCV-Android-Studio-Library">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/ramonrabello/OpenCV-Android-Studio-Library/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/ramonrabello/OpenCV-Android-Studio-Library/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>OpenCV in Android Studio</h1>
+          <p>Lear how to use OpenCV as an Android Studio library and integrate to your project</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/ramonrabello">ramonrabello</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h3>
+<a id="download-the-opencv4android-sdk" class="anchor" href="#download-the-opencv4android-sdk" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download the OpenCV4Android SDK</h3>
+
+<p>Go to the <a href="http://opencv.org/downloads.html">OpenCV download page</a> and click in the "Open CV for Android" link to download the SDK. The version of the SDK used for this tutorial was the 3.0.0. Please refer to the exact version when you are downloading it. After download, extract the zip file.</p>
+
+<h3>
+<a id="import-opencv-into-android-studio" class="anchor" href="#import-opencv-into-android-studio" aria-hidden="true"><span class="octicon octicon-link"></span></a>Import OpenCV into Android Studio</h3>
+
+<p>Start Android Studio and go to <em>File -&gt; New -&gt; Import Module</em>, choose <strong>/sdk/java</strong> folder in the unzipped opencv archive</p>
+
+<h3>
+<a id="update-buildgradle" class="anchor" href="#update-buildgradle" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update build.gradle</h3>
+
+<p>Open the build.gradle file and update the following fields according to the build.gradle of your app module:</p>
+
+<ul>
+<li>compileSdkVersion</li>
+<li>buildToolsVersion</li>
+<li>minSdkVersion</li>
+<li>targetSdkVersion</li>
+</ul>
+
+<h3>
+<a id="add-module-dependency" class="anchor" href="#add-module-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add module dependency</h3>
+
+<p>In the build.gradle of the app module, add the following line to the <code>dependencies</code> section and sync project with Gradle files:</p>
+
+<pre><code>dependencies {
+    // other dependencies
+    compile project(':opencv')
+}
+</code></pre>
+
+<h3>
+<a id="copy-opencv-libs" class="anchor" href="#copy-opencv-libs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Copy OpenCV libs</h3>
+
+<p>Create the folder <code>jniLibs</code> inside <strong>app/src/main</strong> and copy the <strong>/sdk/native/libs</strong> folder to it. The <code>libs</code>folder contains all compiled .so according to each platform architecture. If you exclude one of them, make sure that the emulator or device are compatible</p>
+
+<h3>
+<a id="loading-opencv-engine" class="anchor" href="#loading-opencv-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loading OpenCV engine</h3>
+
+<p>Finally, load the OpenCV runtime in order to communicate with native code, via Java Native Interface (JNI). Basically, the OpenCV has two modes to init the engine: async or debug. The former, checks if the OpenCV Manager package is installed. If not, a dialog is shown with a message, as updating or need to install from the Google Play Store.</p>
+
+<pre><code>boolean engineWasInitiated = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, new LoaderCallbackInterface(){
+        @Override
+        public void onManagerConnected(int status) {
+            if (status == LoaderCallbackInterface.SUCCESS){
+                Log.d("OpenCVLoader", "OpenCV Manager was loaded successfully.");
+            }
+        }
+
+        @Override
+        public void onPackageInstall(int operation, InstallCallbackInterface callback) {
+            // the OpenCV Manager was installed
+        }
+    })
+if(engineWasInitiated){
+    // call OpenCV4Android classes here
+}
+</code></pre>
+
+<p>The debug mode does not require the OpenCV Manager app to be installed, but the libs have to be present </p>
+
+<pre><code>boolean engineWasInitiated = OpenCVLoader.initDebug();
+if (engineWasInitiated){
+    // call OpenCV4Android classes here
+}
+</code></pre>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>I would like to thanks <a href="https://stackoverflow.com/users/1180117/kiran">Kiran</a> to post <a href="https://stackoverflow.com/a/27421494/4147370">this answer</a> on StackOverflow, which helped me a lot and motivated me to write this how-to guide. </p>
+
+<p>Special thanks to OpenCV Team to provide us a great and powerful Open Source Computer Vision Library!</p>
+
+<h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>If you have some issues, doubts or improvement suggestions, please let me know and reach me at ramon.rabello{at}gmail.com.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
